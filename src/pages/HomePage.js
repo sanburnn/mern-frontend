@@ -63,9 +63,13 @@ const HomePage = () => {
 
     return (
         <div>
-            <header className="header">
+            {/* <header className="header">
                 <button onClick={openModal} className='create-button'>Create</button>
                 <button onClick={handleLogout} className='logout-button'>Logout</button>
+            </header> */}
+            <header style={{ display: 'flex', justifyContent: 'space-between', padding: '20px' }}>
+                <button onClick={openModal} style={{ padding: '10px' }} className='create-button'>Create</button>
+                <button onClick={handleLogout} style={{ padding: '10px' }} className='logout-button'>Logout</button>
             </header>
             <Calendar
                 localizer={localizer}
