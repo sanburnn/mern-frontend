@@ -1,30 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import '../styles/CreateEmailModal.css';
 
-Modal.setAppElement('#root'); 
+Modal.setAppElement('#root');
 
-const CreateEmailModal = ({ isOpen, onClose, refreshEvents }) => {
+const EventDetailsModal = ({ event, isOpen, onClose, refreshEvents }) => {
     const [email, setEmail] = useState('');
     const [date, setDate] = useState('');
     const [description, setDescription] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (event) {
+            setEmail(event.title);
+            setDate(event.start.toISOString().split('T')[0]);
+            setDescription(event.description || '');
+        }
+    }, [event]);
+
+    const handleUpdate = async () => {
         try {
-            await axios.post('http://localhost:4000/api/emails', { 
-                email, date, description 
-            });
-            setEmail('');
-            setDate('');
-            setDescription('');
+            await axios.put(`http://localhost:4000/api/emails/${event.id}`, { email, date, description });
             refreshEvents();
             onClose();
         } catch (err) {
-            setError('Failed to create email. Please try again.');
-            console.error(err);
+            setError('Failed to update event. Please try again.');
+            console.error('Failed to update event', err);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`http://localhost:4000/api/emails/${event.id}`);
+            refreshEvents();
+            onClose();
+        } catch (err) {
+            setError('Failed to delete event. Please try again.');
+            console.error('Failed to delete event', err);
         }
     };
 
@@ -32,19 +45,18 @@ const CreateEmailModal = ({ isOpen, onClose, refreshEvents }) => {
         <Modal
             isOpen={isOpen}
             onRequestClose={onClose}
-            contentLabel="Create Email"
+            contentLabel="Event Details"
             className="custom-modal"
             overlayClassName="custom-overlay"
         >
-            <h2 className="modal-title">Create New Email</h2>
-            <form onSubmit={handleSubmit} className="modal-form">
+            <h2 className="modal-title">Event Details</h2>
+            <form className="modal-form" onSubmit={(e) => e.preventDefault()}>
                 <div className="form-group">
                     <label>Email:</label>
                     <input 
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        required
                         className="form-input"
                     />
                 </div>
@@ -54,7 +66,6 @@ const CreateEmailModal = ({ isOpen, onClose, refreshEvents }) => {
                         type="date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        required
                         className="form-input"
                     />
                 </div>
@@ -63,13 +74,13 @@ const CreateEmailModal = ({ isOpen, onClose, refreshEvents }) => {
                     <textarea 
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        required
                         className="form-textarea"
                     />
                 </div>
                 {error && <p className="error-message">{error}</p>}
                 <div className="modal-buttons">
-                    <button type="submit" className="submit-button">Submit</button>
+                    <button type="button" onClick={handleUpdate} className="submit-button">Update</button>
+                    <button type="button" onClick={handleDelete} className="delete-button">Delete</button>
                     <button type="button" onClick={onClose} className="cancel-button">Cancel</button>
                 </div>
             </form>
@@ -77,4 +88,4 @@ const CreateEmailModal = ({ isOpen, onClose, refreshEvents }) => {
     );
 };
 
-export default CreateEmailModal;
+export default EventDetailsModal;
