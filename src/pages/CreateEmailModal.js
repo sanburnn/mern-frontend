@@ -17,6 +17,9 @@ const CreateEmailModal = ({ isOpen, onClose, refreshEvents }) => {
             await axios.post('http://localhost:4000/api/emails', { 
                 email, date, description 
             });
+            // await axios.post('http://localhost:4000/api/emails/emails', { 
+            //     email, date, description 
+            // });
             setEmail('');
             setDate('');
             setDescription('');
