@@ -12,5 +12,6 @@
     npm start
 ```
 
-Open [This Link](http://localhost:3000) in your browser to access the frontend
+Open [This Link](http://localhost:3000) http://localhost:3000 in your browser to access the frontend
+
 Create Account First on Sign Up page
